@@ -1,10 +1,12 @@
 import 'dart:core';
+import 'dart:math';
 
 import 'package:elma/api/api_products.dart';
 import 'package:elma/constants/constant.dart';
 import 'package:elma/screens/allCategoryScreen.dart';
 import 'package:elma/screens/bannerScreen.dart';
 import 'package:elma/screens/categoriesScreen.dart';
+import 'package:elma/screens/navigation.dart';
 import 'package:elma/screens/productScreen.dart';
 import 'package:flutter/material.dart';
 
@@ -18,6 +20,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int currentSlide = 0;
+
   List tabs = ["All", "Category", "Top", "Recommend"];
 
   List imageList = [
@@ -35,6 +38,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<List<Product>> getListProductBestSeller() async {
     return APIProduct.getListProduct();
+  }
+
+  Future<List<Product>> getListProductHint() async {
+    return APIProduct.getListProduct1();
   }
 
   @override
@@ -67,6 +74,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         border: InputBorder.none,
                         hintText: 'Find your product',
                       ),
+                    
                     ),
                   ),
                   Container(
@@ -237,10 +245,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                       MainAxisAlignment.spaceBetween,
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
-                                    Text("${data[index].price!.first}",
+                                    Text(numberFormatted(data[index].price!.first),
                                         style: TextStyle(
                                             color: kPrimaryColor,
-                                            fontSize: 18,
+                                            fontSize: 12,
                                             fontWeight: FontWeight.bold)),
                                     SizedBox(
                                       width: 10,
@@ -277,89 +285,113 @@ class _HomeScreenState extends State<HomeScreen> {
               SizedBox(
                 height: 10,
               ),
-              GridView.builder(
-                  itemCount: productTitles.length,
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    childAspectRatio: 0.6,
-                    crossAxisSpacing: 2,
-                    // mainAxisSpacing: 10,
-                  ),
-                  itemBuilder: (context, index) {
-                    return Center(
-                      child: Container(
-                        width: 200,
-                        margin: const EdgeInsets.only(right: 15, bottom: 10),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SizedBox(
-                              height: 180,
-                              child: Stack(
-                                children: [
-                                  InkWell(
-                                    onTap: () {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                ProductScreen(product: Product.cc(),),
-                                          ));
-                                    },
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(20),
-                                      child: Image.asset(
-                                        imageList[index],
-                                        width: 180,
-                                        height: 220,
-                                        fit: BoxFit.cover,
-                                        // height: 180,
-                                        // width: 150,
-                                        // fit: BoxFit.cover
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(height: 5),
-                            Text(
-                              productTitles[index],
-                              style: const TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.bold),
-                            ),
-                            const SizedBox(height: 5),
-                            Row(
-                              children: [
-                                Text(
-                                  prices[index],
-                                  style: const TextStyle(
-                                      color: kPrimaryColor,
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                const SizedBox(
-                                  width: 10,
-                                ),
-                                const Icon(Icons.star,
-                                    color: Colors.yellow, size: 16),
-                                Text('(' + reviews[index] + ')',
-                                    style: TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.bold)),
-                              ],
-                            )
-                          ],
+              FutureBuilder(
+                future: getListProductHint(),
+                builder: (context, snapshot) {
+                  if(snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(child: CircularProgressIndicator(),);
+                  }
+                  else if(snapshot.hasError) {
+                    print(snapshot.error);
+                    return Center(child: CircularProgressIndicator(),);
+                  }
+                  else {
+                    final data = snapshot.data;
+                    return GridView.builder(
+                        itemCount: data!.length,
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          childAspectRatio: 0.6,
+                          crossAxisSpacing: 2,
+                          // mainAxisSpacing: 10,
                         ),
-                      ),
-                    );
-                  }),
+                        itemBuilder: (context, index) {
+                          return productItem(data![index]);
+                        });
+                  }
+                },
+              ),
             ],
           ),
         )),
+      ),
+    );
+  }
+
+  Widget productItem(Product product) {
+    return Center(
+      child: Container(
+        width: 210,
+        margin: const EdgeInsets.only(right: 15, bottom: 10),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(
+              height: 180,
+              child: Stack(
+                children: [
+                  InkWell(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                ProductScreen(product: product,),
+                          ));
+                    },
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(20),
+                      child: Image.network(
+                        product.image!,
+                        width: 180,
+                        height: 220,
+                        fit: BoxFit.cover,
+                        // height: 180,
+                        // width: 150,
+                        // fit: BoxFit.cover
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 5),
+            SizedBox(
+              width: 170,
+              child: Text(
+                product.name!,
+                style: const TextStyle(
+                    fontSize: 14, fontWeight: FontWeight.bold),
+                maxLines: 3,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            const SizedBox(height: 5),
+            Row(
+              children: [
+                Text(
+                  numberFormatted(product.price!.first),
+                  style: const TextStyle(
+                      color: kPrimaryColor,
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(
+                  width: 10,
+                ),
+                const Icon(Icons.star,
+                    color: Colors.yellow, size: 16),
+                Text('('  "${product.rating!}"  ')',
+                    style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold)),
+              ],
+            )
+          ],
+        ),
       ),
     );
   }

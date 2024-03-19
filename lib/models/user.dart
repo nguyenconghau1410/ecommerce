@@ -2,6 +2,7 @@
 import 'dart:convert';
 
 class User {
+  String? id;
   String? avatar;
   String? name;
   String? email;
@@ -13,9 +14,9 @@ class User {
   bool? is_admin;
   int? phone;
   List<String>? likedProducts;
-  DateTime dateCreated;
 
   User(
+    this.id,
     this.avatar,
     this.name,
     this.email,
@@ -27,11 +28,11 @@ class User {
     this.is_admin,
     this.phone,
     this.likedProducts,
-    this.dateCreated,
   );
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
+      'id': id,
       'avatar': avatar,
       'name': name,
       'email': email,
@@ -43,12 +44,16 @@ class User {
       'is_admin': is_admin,
       'phone': phone,
       'likedProducts': likedProducts,
-      'dateCreated': dateCreated.millisecondsSinceEpoch,
     };
   }
 
   factory User.fromMap(Map<String, dynamic> map) {
+    List<String> likedProducts = [];
+    for(String x in map['likedProducts']) {
+      likedProducts.add(x);
+    }
     return User(
+      map['id'],
       map['avatar'],
       map['name'],
       map['email'],
@@ -59,8 +64,7 @@ class User {
       map['country'],
       map['is_admin'],
       map['phone'],
-      map['likedProducts'],
-      DateTime.fromMillisecondsSinceEpoch(map['dateCreated'] as int),
+      likedProducts,
     );
   }
 

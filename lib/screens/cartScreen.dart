@@ -1,7 +1,13 @@
+import 'package:elma/api/api_cart.dart';
+import 'package:elma/constants/ability.dart';
 import 'package:elma/constants/constant.dart';
 import 'package:elma/screens/paymentMethod.dart';
+import 'package:elma/services/cart_controller.dart';
 import 'package:elma/widgets/container_button_model.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
+
+import '../models/cart.dart';
 
 class CartScreen extends StatefulWidget {
   @override
@@ -9,19 +15,34 @@ class CartScreen extends StatefulWidget {
 }
 
 class _CartScreenState extends State<CartScreen> {
-  List imageList = [
-    "images/Ip15.jpg",
-    "images/lapdell.jpg",
-    "images/pc.jpg",
-    "images/Sony.jpg",
-  ];
+  List<CartController> cartControl = [];
+  bool selectAll = false;
+  Future<void> getCart() async {
+    List<Cart> carts = await APICart.getCart(Ability.user!.id!);
+    setState(() {
+      List<CartController> temp = [];
+      carts.forEach((element) {
+        CartController cartController = CartController();
+        cartController.init(element);
+        temp.add(cartController);
+      });
+      cartControl = temp;
+    });
+  }
 
-  List productTitles = ["Mobile", "Laptop", "PC", "Air"];
+  int caculate() {
+    int sum = 0;
+    cartControl.forEach((element) {
+      sum += element.cart!.product!.price!.first * element.cart!.quantity!;
+    });
+    return sum;
+  }
 
-  List reviews = ["54", "100", "789", "34"];
-  List quantity = ["54", "100", "789", "34"];
-
-  List prices = ["1.300.000", "1.300.000", "1.300.000", "1.300.000"];
+  @override
+  void initState() {
+    super.initState();
+    getCart();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,128 +59,19 @@ class _CartScreenState extends State<CartScreen> {
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsets.all(20),
+          padding: EdgeInsets.all(10),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                child: ListView.builder(
-                    itemCount: imageList.length,
-                    shrinkWrap: true,
-                    scrollDirection: Axis.vertical,
-                    physics: NeverScrollableScrollPhysics(),
-                    itemBuilder: (context, index) {
-                      return Container(
-                          margin: EdgeInsets.symmetric(vertical: 15),
-                          child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Checkbox(
-                                    splashRadius: 20,
-                                    activeColor: Color(0xFF5C6AC4),
-                                    value: true,
-                                    onChanged: (val) {}),
-                                ClipRRect(
-                                    borderRadius: BorderRadius.circular(10),
-                                    child: Image.asset(
-                                      imageList[index],
-                                      height: 70,
-                                      width: 70,
-                                      fit: BoxFit.cover,
-                                    )),
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      productTitles[index],
-                                      style: TextStyle(
-                                          color: Colors.black87,
-                                          fontWeight: FontWeight.w900,
-                                          fontSize: 16),
-                                    ),
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                    Text(prices[index],
-                                        style: TextStyle(
-                                            color: Color(0xFF5C6AC4),
-                                            fontWeight: FontWeight.w900,
-                                            fontSize: 18))
-                                  ],
-                                ),
-                                // Row(
-                                //   children: [
-                                //     Icon(
-                                //       CupertinoIcons.minus,
-                                //       color: Colors.green,
-                                //     ),
-                                //     SizedBox(
-                                //       width: 10,
-                                //     ),
-                                //     Text(
-                                //       "1",
-                                //       style: TextStyle(
-                                //         fontSize: 16,
-                                //         fontWeight: FontWeight.w700,
-                                //       ),
-                                //     ),
-                                //     SizedBox(
-                                //       width: 10,
-                                //     ),
-                                //     Icon(
-                                //       CupertinoIcons.plus,
-                                //       color: Colors.green,
-                                //     )
-                                //   ],
-                                // )
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    IconButton(
-                                        onPressed: () {
-                                          setState(() {
-                                            if (quantity[index] > 0) {
-                                              quantity[index]--;
-                                            }
-                                          });
-                                        },
-                                        icon: Icon(
-                                          Icons.remove_circle_outline,
-                                          color: Color(0xFF5C6AC4),
-                                        )),
-                                    Container(
-                                        width: 35,
-                                        height: 35,
-                                        color:
-                                            Color.fromARGB(255, 227, 224, 224),
-                                        child: TextField(
-                                          enabled: false,
-                                          textAlign: TextAlign.center,
-                                          decoration: InputDecoration(
-                                              border: InputBorder.none,
-                                              hintText:
-                                                  quantity[index].toString(),
-                                              hintStyle: TextStyle(
-                                                  color: Color(0xFF5C6AC4))),
-                                        )),
-                                    IconButton(
-                                        onPressed: () {
-                                          setState(() {
-                                            // Max 5
-                                            if (quantity[index] <= 100) {
-                                              quantity[index]++;
-                                            }
-                                          });
-                                        },
-                                        icon: Icon(
-                                          Icons.add_circle_outline,
-                                          color: Color(0xFF5C6AC4),
-                                        )),
-                                  ],
-                                )
-                              ]));
+                height: 400,
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: List.generate(cartControl.length, (index) {
+                      return cartItem(cartControl[index]);
                     }),
+                  ),
+                ),
               ),
               SizedBox(height: 40),
               Row(
@@ -175,8 +87,15 @@ class _CartScreenState extends State<CartScreen> {
                   Checkbox(
                       splashRadius: 20,
                       activeColor: Color(0xFF5C6AC4),
-                      value: false,
-                      onChanged: (val) {})
+                      value: selectAll,
+                      onChanged: (val) {
+                        setState(() {
+                          selectAll = !selectAll;
+                          cartControl.forEach((element) {
+                            element.clicked = selectAll;
+                          });
+                        });
+                      })
                 ],
               ),
               Divider(
@@ -194,7 +113,7 @@ class _CartScreenState extends State<CartScreen> {
                     ),
                   ),
                   Text(
-                    "\$300.50",
+                    numberFormatted(caculate()),
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w800,
@@ -222,7 +141,105 @@ class _CartScreenState extends State<CartScreen> {
             ],
           ),
         ),
-      ),
+      )
     );
   }
+
+  Widget cartItem(CartController cartController) {
+    return Container(
+        margin: EdgeInsets.symmetric(vertical: 15),
+        child: Row(
+            children: [
+              Checkbox(
+                  splashRadius: 20,
+                  activeColor: Color(0xFF5C6AC4),
+                  value: cartController.clicked,
+                  onChanged: (val) {
+                    setState(() {
+                      cartController.onClick();
+                    });
+                  }),
+              ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: Image.network(
+                    cartController.cart!.product!.image!,
+                    height: 70,
+                    width: 70,
+                    fit: BoxFit.cover,
+                  )),
+              const SizedBox(width: 10,),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width - 150,
+                    child: Text(
+                      cartController.cart!.product!.name!,
+                      style: TextStyle(
+                          color: Colors.black87,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 13),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  Text(numberFormatted(cartController.cart!.product!.price!.first),
+                      style: TextStyle(
+                          color: Color(0xFF5C6AC4),
+                          fontWeight: FontWeight.w900,
+                          fontSize: 16)),
+                  SizedBox(height: 5,),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      InkWell(
+                        onTap: () {
+                          setState(() {
+                            if(cartController.cart!.quantity == null) {
+                              cartController.cart!.quantity = 1;
+                            }
+                            else {
+                              if(cartController.cart!.quantity! - 1 <= 0) {
+                                cartController.cart!.quantity = 1;
+                              }
+                              else {
+                                int temp = cartController.cart!.quantity! - 1;
+                                cartController.cart!.quantity = temp;
+                              }
+                            }
+                          });
+                        },
+                        child: Icon(
+                          Icons.remove_circle_outline,
+                          color: Color(0xFF5C6AC4),
+                        ),
+                      ),
+                      SizedBox(width: 5,),
+                      Container(
+                        width: 30,
+                        height: 30,
+                        color: Color.fromARGB(255, 227, 224, 224),
+                        child: Center(child: Text(cartController.cart!.quantity.toString(), style: TextStyle(color: Color(0xFF5C6AC4)),),),
+                      ),
+                      SizedBox(width: 5,),
+                      InkWell(
+                        onTap: () {
+                          setState(() {
+                            cartController.cart!.quantity = cartController.cart!.quantity == null ? 0 : cartController.cart!.quantity! + 1;
+                          });
+                        },
+                        child: Icon(
+                          Icons.add_circle_outline,
+                          color: Color(0xFF5C6AC4),
+                        ),
+                      ),
+                    ],
+                  )
+                ],
+              ),
+            ]
+        )
+    );
+  }
+
 }

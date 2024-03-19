@@ -2,6 +2,8 @@ import 'package:elma/api/apiCategories.dart';
 import 'package:elma/models/category.dart';
 import 'package:flutter/material.dart';
 
+import 'allProductsScreen.dart';
+
 class CategoriesScreen extends StatefulWidget {
   const CategoriesScreen({super.key});
 
@@ -41,31 +43,41 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
   }
 
   Widget category(Categories categories) {
-    return Padding(
-      padding: EdgeInsets.only(left: 10, right: 10),
-      child: Column(
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(20),
-            child: Image.network(
-                categories.icon!,
-                width: 40,
-                height: 40,
-                fit: BoxFit.fill),
+    return InkWell(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => AllProductsScreen(categories: categories,),
           ),
-          const SizedBox(height: 5),
-          SizedBox(
-            width: 50,
-            child: Text(
-              categories.name!,
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-              ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
+        );
+      },
+      child: Padding(
+        padding: EdgeInsets.only(left: 10, right: 10),
+        child: Column(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(20),
+              child: Image.network(
+                  categories.icon!,
+                  width: 40,
+                  height: 40,
+                  fit: BoxFit.fill),
             ),
-          ),
-        ],
+            const SizedBox(height: 5),
+            SizedBox(
+              width: 50,
+              child: Text(
+                categories.name!,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

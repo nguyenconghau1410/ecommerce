@@ -2,6 +2,7 @@ import 'package:elma/constants/constant.dart';
 import 'package:elma/models/user.dart';
 import 'package:elma/screens/forgotPassword.dart';
 import 'package:elma/screens/homeScreen.dart';
+import 'package:elma/screens/navigation.dart';
 import 'package:elma/screens/signup.dart';
 import 'package:flutter/material.dart';
 
@@ -19,8 +20,8 @@ class _LoginState extends State<Login> {
 
   final passwordController = TextEditingController();
 
-  Future<User?> login() async {
-    await APIAuth.login(emailController.text, passwordController.text);
+  Future<void> login() async {
+    await APIAuth.login(emailController.text, passwordController.text, context);
   }
 
   @override
@@ -82,11 +83,8 @@ class _LoginState extends State<Login> {
                     height: 40,
                   ),
                   ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => HomeScreen()));
+                      onPressed: () async {
+                        await login();
                       },
                       child: Text(
                         "Log in",

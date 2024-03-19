@@ -58,7 +58,7 @@ class Product {
         json['description'],
         prices,
         json['brand'],
-        json['rating'],
+        json['rating'] == null ? 3.0 : (json['rating'] * 1.0),
         json['numberReviews'],
         json['image'],
         imagess);
@@ -80,7 +80,7 @@ class Product {
         json['description'],
         prices,
         json['brand'],
-        json['rating'],
+        json['rating'] * (1.0),
         json['numberReviews'],
         json['image'],
         imagess,

@@ -5,7 +5,14 @@ class BannerScreen extends StatelessWidget {
   final Function(int) onChange;
   final int currentSlide;
 
-  const BannerScreen({
+  final List<String> imageUrls = [
+    "images/splash.png",
+    "images/banner1.png",
+    "images/banner2.png",
+    "images/banner3.jpg",
+  ];
+
+   BannerScreen({
     super.key,
     required this.onChange,
     required this.currentSlide,
@@ -20,7 +27,7 @@ class BannerScreen extends StatelessWidget {
           width: double.infinity,
           child: PageView.builder(
             onPageChanged: onChange,
-            itemCount: 4,
+            itemCount: imageUrls.length,
             itemBuilder: (context, index) {
               return Container(
                 height: 200,
@@ -28,11 +35,9 @@ class BannerScreen extends StatelessWidget {
                 decoration: BoxDecoration(
                     color: Color.fromARGB(255, 163, 171, 232),
                     borderRadius: BorderRadius.circular(20),
-                    image: const DecorationImage(
+                    image: DecorationImage(
                       fit: BoxFit.fill,
-                      image: AssetImage(
-                        "images/splash.png",
-                      ),
+                      image: AssetImage(imageUrls[index])
                     )),
               );
             },
@@ -45,7 +50,7 @@ class BannerScreen extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: List.generate(
-                4,
+                imageUrls.length,
                 (index) => AnimatedContainer(
                   duration: const Duration(milliseconds: 300),
                   width: currentSlide == index ? 15 : 8,

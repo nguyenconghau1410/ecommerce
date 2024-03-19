@@ -3,7 +3,7 @@ import 'package:elma/constants/constant.dart';
 import 'package:elma/screens/cartScreen.dart';
 import 'package:elma/screens/favoriteScreen.dart';
 import 'package:elma/screens/homeScreen.dart';
-import 'package:elma/screens/profileScreen.dart';
+import 'package:elma/screens/profile_scr.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -21,7 +21,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
     HomeScreen(),
     CartScreen(),
     FavoriteScreen(),
-    ProfileScreen()
+    ProfileScr()
   ];
 
   @override

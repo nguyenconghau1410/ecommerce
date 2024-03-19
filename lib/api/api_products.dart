@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:elma/api/utils.dart';
 import 'package:elma/models/products.dart';
@@ -24,6 +25,7 @@ class APIProduct {
       }
     } catch (e) {
       rethrow;
+      print(e.toString());
     }
   }
 
@@ -32,8 +34,7 @@ class APIProduct {
       final response = await http.get(
           Uri.parse("${Utils.apiGetProductbyCategoryId}/$categoryId"));
       if (response.statusCode == 200) {
-        List<dynamic> data = json.decode(utf8.decode(response.bodyBytes));
-        print(data);
+        List<dynamic> data = json.decode(utf8.decode(response.bodyBytes))['products'];
         List<Product> products = [];
         data.forEach((element) {
           products.add(Product.fromJson1(element));
@@ -41,11 +42,36 @@ class APIProduct {
         return products;
       }
       else {
-        print("ccccccccccccccccccccccc");
         return [];
       }
     }
     catch (e) {
+      rethrow;
+    }
+  }
+
+  static Future<List<Product>> getListProduct1() async {
+    try {
+      final response = await http.get(Uri.parse(Utils.apiGetProducts));
+      if (response.statusCode == 200) {
+        List<dynamic> data = json.decode(utf8.decode(response.bodyBytes));
+        List<Product> products = [];
+        data.forEach((element) {
+          products.add(Product.fromJson(element));
+        });
+        Random random = Random();
+        int a = random.nextInt(products.length - 20);
+        List<Product> hintProduct = [];
+        for(int i = a; i <= a + 20; i++) {
+          hintProduct.add(products[i]);
+        }
+        print("${hintProduct.length} aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+        return hintProduct;
+      } else {
+        print(response.statusCode);
+        return [];
+      }
+    } catch (e) {
       rethrow;
     }
   }
