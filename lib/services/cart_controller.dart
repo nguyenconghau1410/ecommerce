@@ -1,3 +1,5 @@
+import 'package:elma/api/api_cart.dart';
+import 'package:elma/constants/ability.dart';
 import 'package:elma/models/cart.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -11,5 +13,13 @@ class CartController {
 
   void onClick() {
     clicked = !clicked;
+  }
+
+  Future<void> delete(String userid, String id) async {
+    await APICart.deleteCart(userid, id);
+  }
+
+  Future<void> add(String userid, String id) async {
+    await APICart.addCart(userid, id);
   }
 }

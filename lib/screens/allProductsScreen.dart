@@ -21,30 +21,7 @@ class _AllProductsScreenState extends State<AllProductsScreen> {
 
   String searchText = '';
 
-  List<String> mobileBrands = [
-    "Samsung",
-    "iPhone",
-    "Oppo",
-    "Sony",
-    "Nokia",
-    "Xiaomi",
-    "Huawei",
-    "LG",
-    "Google Pixel",
-    "OnePlus",
-  ];
-  List imageList = [
-    "images/Ip15.jpg",
-    "images/lapdell.jpg",
-    "images/pc.jpg",
-    "images/Sony.jpg",
-  ];
 
-  List productTitles = ["Mobile", "Laptop", "PC", "Air"];
-
-  List reviews = ["54", "100", "789", "34"];
-
-  List prices = ["1.300.000", "1.300.000", "1.300.000", "1.300.000"];
 
   @override
   Widget build(BuildContext context) {
@@ -116,38 +93,6 @@ class _AllProductsScreenState extends State<AllProductsScreen> {
               SizedBox(
                 height: 20,
               ),
-              // SizedBox(
-              //   height: 50,
-              //   child: ListView.builder(
-              //     shrinkWrap: true,
-              //     scrollDirection: Axis.horizontal,
-              //     itemCount: mobileBrands.length,
-              //     itemBuilder: (context, index) {
-              //       return FittedBox(
-              //         child: Container(
-              //           height: 40,
-              //           margin: EdgeInsets.all(8),
-              //           padding: EdgeInsets.only(left: 15, right: 15),
-              //           decoration: BoxDecoration(
-              //             color: kPrimaryColor.withOpacity(0.8),
-              //             borderRadius: BorderRadius.circular(20),
-              //           ),
-              //           child: Center(
-              //             child: FittedBox(
-              //               child: Text(
-              //                 mobileBrands[index],
-              //                 style: TextStyle(
-              //                     color: Colors.white,
-              //                     fontWeight: FontWeight.bold,
-              //                     fontSize: 16),
-              //               ),
-              //             ),
-              //           ),
-              //         ),
-              //       );
-              //     },
-              //   ),
-              // ),
               SizedBox(height: 10),
               FutureBuilder(
                 future: getListProductCategory(widget.categories.id),
@@ -157,7 +102,6 @@ class _AllProductsScreenState extends State<AllProductsScreen> {
                       child: CircularProgressIndicator(),
                     );
                   } else if (snapshot.hasError) {
-                    print(snapshot.error.toString());
                     return const Center(
                       child: CircularProgressIndicator(),
                     );

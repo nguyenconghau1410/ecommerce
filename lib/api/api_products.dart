@@ -35,6 +35,7 @@ class APIProduct {
           Uri.parse("${Utils.apiGetProductbyCategoryId}/$categoryId"));
       if (response.statusCode == 200) {
         List<dynamic> data = json.decode(utf8.decode(response.bodyBytes))['products'];
+        print(data);
         List<Product> products = [];
         data.forEach((element) {
           products.add(Product.fromJson1(element));
@@ -42,6 +43,7 @@ class APIProduct {
         return products;
       }
       else {
+        print(response.statusCode);
         return [];
       }
     }

@@ -88,4 +88,5 @@ class Product {
     );
   }
 
+  String? get id => _id;
 }

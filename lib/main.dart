@@ -1,7 +1,4 @@
 import 'package:elma/constants/constant.dart';
-import 'package:elma/screens/login.dart';
-import 'package:elma/screens/onboadingScreen.dart';
-import 'package:elma/screens/signup.dart';
 import 'package:elma/screens/splashScreen.dart';
 import 'package:flutter/material.dart';
 

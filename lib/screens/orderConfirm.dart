@@ -4,14 +4,26 @@ import 'package:elma/screens/paymentMethod.dart';
 import 'package:elma/screens/shippingAddress.dart';
 import 'package:flutter/material.dart';
 
+import '../services/cart_controller.dart';
+
 class OrderConfirm extends StatefulWidget {
-  const OrderConfirm({super.key});
+  Map<String, dynamic> info;
+  List<CartController> carts;
+  OrderConfirm({super.key, required this.info, required this.carts});
 
   @override
   State<OrderConfirm> createState() => _OrderConfirmState();
 }
 
 class _OrderConfirmState extends State<OrderConfirm> {
+
+  int caculate() {
+    int sum = 0;
+    widget.carts.forEach((element) {
+      sum += element.cart!.product!.price!.first * element.cart!.quantity!;
+    });
+    return sum;
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -57,39 +69,24 @@ class _OrderConfirmState extends State<OrderConfirm> {
                                 ]),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
-                                      "Dear Programer",
+                                      widget.info['name'],
                                       style: TextStyle(fontSize: 16),
                                     ),
-                                    TextButton(
-                                        onPressed: () {
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      ShippingAddress()));
-                                        },
-                                        child: Text(
-                                          "Change",
-                                          style: TextStyle(
-                                            fontSize: 18,
-                                            color: kPrimaryColor,
-                                          ),
-                                        ))
                                   ],
                                 ),
                                 Text(
-                                  "3 Hoàng Hoa Thám - Tân Bình",
+                                  widget.info['address'],
                                   style: TextStyle(fontSize: 16),
                                 ),
                                 Text(
-                                  "TP. Hồ Chí Minh - 97545 - Việt Nam",
+                                  "${widget.info['city']} - ${widget.info['country']}",
                                   style: TextStyle(fontSize: 16),
                                 ),
                               ],
@@ -108,11 +105,11 @@ class _OrderConfirmState extends State<OrderConfirm> {
                               ),
                               TextButton(
                                   onPressed: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                PaymentMethod()));
+                                    // Navigator.push(
+                                    //     context,
+                                    //     MaterialPageRoute(
+                                    //         builder: (context) =>
+                                    //             PaymentMethod()));
                                   },
                                   child: Text(
                                     "Change",
@@ -156,128 +153,26 @@ class _OrderConfirmState extends State<OrderConfirm> {
                           SizedBox(
                             height: 30,
                           ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                "Delivery method",
-                                style: TextStyle(
-                                    fontSize: 19, fontWeight: FontWeight.w600),
-                              ),
-                            ],
+                          Text(
+                            "Products",
+                            style: TextStyle(
+                                fontSize: 19, fontWeight: FontWeight.w600),
                           ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Row(
-                            children: [
-                              Container(
-                                  height: 60,
-                                  width: 120,
-                                  decoration: BoxDecoration(
-                                      color: kWhiteColor,
-                                      borderRadius: BorderRadius.circular(10),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.black12,
-                                          blurRadius: 4,
-                                          spreadRadius: 2,
-                                        )
-                                      ]),
-                                  child: Column(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceAround,
-                                    children: [
-                                      Image.asset("images/icon3.png"),
-                                      Text("2 - 7 Days")
-                                    ],
-                                  )),
-                              SizedBox(
-                                width: 10,
+                          Container(
+                            height: 400,
+                            child: SingleChildScrollView(
+                              child: Column(
+                                children: List.generate(widget.carts.length, (index) {
+                                  return cartItem(widget.carts[index]);
+                                }),
                               ),
-                              Container(
-                                  height: 60,
-                                  width: 160,
-                                  decoration: BoxDecoration(
-                                      color: kWhiteColor,
-                                      borderRadius: BorderRadius.circular(10),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.black12,
-                                          blurRadius: 4,
-                                          spreadRadius: 2,
-                                        )
-                                      ]),
-                                  child: Column(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceAround,
-                                    children: [
-                                      Text(
-                                        "Home delivery",
-                                        style: TextStyle(
-                                            fontSize: 18,
-                                            color: kPrimaryColor,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      Text("2 - 7 Days")
-                                    ],
-                                  )),
-                            ],
+                            ),
                           ),
                           SizedBox(
                             height: 50,
                           ),
                           Column(
                             children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    "Sub total",
-                                    style: TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w400,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                  Text(
-                                    "\$ 350.50",
-                                    style: TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  )
-                                ],
-                              ),
-                              SizedBox(
-                                height: 20,
-                              ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    "Shopping fee",
-                                    style: TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w400,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                  Text(
-                                    "\$ 10.50",
-                                    style: TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  )
-                                ],
-                              ),
-                              Divider(
-                                height: 30,
-                                color: Colors.black,
-                              ),
                               Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
@@ -291,7 +186,7 @@ class _OrderConfirmState extends State<OrderConfirm> {
                                     ),
                                   ),
                                   Text(
-                                    "\$ 361.00",
+                                    numberFormatted(caculate()),
                                     style: TextStyle(
                                         fontSize: 15,
                                         fontWeight: FontWeight.bold,
@@ -323,5 +218,55 @@ class _OrderConfirmState extends State<OrderConfirm> {
                             ],
                           )
                         ])))));
+  }
+
+  Widget cartItem(CartController cartController) {
+    return Container(
+        margin: EdgeInsets.symmetric(vertical: 15),
+        child: Row(children: [
+          ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: Image.network(
+                cartController.cart!.product!.image!,
+                height: 70,
+                width: 70,
+                fit: BoxFit.cover,
+              )),
+          const SizedBox(
+            width: 10,
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                width: MediaQuery.of(context).size.width - 150,
+                child: Text(
+                  cartController.cart!.product!.name!,
+                  style: TextStyle(
+                      color: Colors.black87,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 13),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              const SizedBox(height: 10,),
+              Row(
+                children: [
+                  Text(numberFormatted(cartController.cart!.product!.price!.first),
+                      style: TextStyle(
+                          color: Color(0xFF5C6AC4),
+                          fontWeight: FontWeight.w900,
+                          fontSize: 16)),
+                  const SizedBox(width: 40,),
+                  Text("SL: ${cartController.cart!.quantity}",style: TextStyle(
+                      color: Color(0xFF5C6AC4),
+                      fontWeight: FontWeight.w900,
+                      fontSize: 16))
+                ],
+              )
+            ],
+          ),
+        ]));
   }
 }

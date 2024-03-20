@@ -1,10 +1,16 @@
 import 'package:elma/constants/constant.dart';
+import 'package:elma/screens/orderConfirm.dart';
 import 'package:elma/screens/shippingAddress.dart';
+import 'package:elma/services/cart_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
+import '../models/cart.dart';
+
 class PaymentMethod extends StatefulWidget {
-  const PaymentMethod({super.key});
+  Map<String, dynamic> info;
+  List<CartController> carts;
+  PaymentMethod({super.key, required this.info, required this.carts});
 
   @override
   State<PaymentMethod> createState() => _PaymentMethodState();
@@ -269,82 +275,15 @@ class _PaymentMethodState extends State<PaymentMethod> {
                 SizedBox(
                   height: 100,
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      "Sub total",
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w400,
-                        color: Colors.black,
-                      ),
-                    ),
-                    Text(
-                      "\$ 350.50",
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    )
-                  ],
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      "Shopping fee",
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w400,
-                        color: Colors.black,
-                      ),
-                    ),
-                    Text(
-                      "\$ 10.50",
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    )
-                  ],
-                ),
-                Divider(
-                  height: 30,
-                  color: Colors.black,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      "Total payment",
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w400,
-                        color: Colors.black,
-                      ),
-                    ),
-                    Text(
-                      "\$ 361.00",
-                      style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                          color: kPrimaryColor),
-                    )
-                  ],
-                ),
                 SizedBox(
                   height: 70,
                 ),
                 ElevatedButton(
                     onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => ShippingAddress()));
+                      // Navigator.push(
+                      //     context,
+                      //     MaterialPageRoute(
+                      //         builder: (context) => OrderConfirm()));
                     },
                     child: Text(
                       "Confirm payment",
