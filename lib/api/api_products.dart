@@ -34,11 +34,10 @@ class APIProduct {
       final response = await http.get(
           Uri.parse("${Utils.apiGetProductbyCategoryId}/$categoryId"));
       if (response.statusCode == 200) {
-        List<dynamic> data = json.decode(utf8.decode(response.bodyBytes))['products'];
-        print(data);
+        List<dynamic> data = json.decode(utf8.decode(response.bodyBytes));
         List<Product> products = [];
         data.forEach((element) {
-          products.add(Product.fromJson1(element));
+          products.add(Product.fromJson(element));
         });
         return products;
       }
@@ -67,8 +66,26 @@ class APIProduct {
         for(int i = a; i <= a + 20; i++) {
           hintProduct.add(products[i]);
         }
-        print("${hintProduct.length} aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
         return hintProduct;
+      } else {
+        print(response.statusCode);
+        return [];
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  static Future<List<Product>> getListByKeywor(String keyword) async {
+    try {
+      final response = await http.get(Uri.parse(Utils.apiSearchByKeyword).replace(queryParameters: {"key": keyword}));
+      if (response.statusCode == 200) {
+        List<dynamic> data = json.decode(utf8.decode(response.bodyBytes));
+        List<Product> products = [];
+        data.forEach((element) {
+          products.add(Product.fromJson(element));
+        });
+        return products;
       } else {
         print(response.statusCode);
         return [];

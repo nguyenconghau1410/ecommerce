@@ -8,6 +8,7 @@ import 'package:elma/screens/bannerScreen.dart';
 import 'package:elma/screens/categoriesScreen.dart';
 import 'package:elma/screens/navigation.dart';
 import 'package:elma/screens/productScreen.dart';
+import 'package:elma/screens/search_screen.dart';
 import 'package:flutter/material.dart';
 
 import '../models/products.dart';
@@ -20,21 +21,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int currentSlide = 0;
-
-  List tabs = ["All", "Category", "Top", "Recommend"];
-
-  List imageList = [
-    "images/Ip15.jpg",
-    "images/lapdell.jpg",
-    "images/pc.jpg",
-    "images/Sony.jpg",
-  ];
-
-  List productTitles = ["Mobile", "Laptop", "PC", "Air"];
-
-  List reviews = ["54", "100", "789", "34"];
-
-  List prices = ["1.300.000", "1.300.000", "1.300.000", "1.300.000"];
+  final textController = TextEditingController();
 
   Future<List<Product>> getListProductBestSeller() async {
     return APIProduct.getListProduct();
@@ -42,6 +29,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<List<Product>> getListProductHint() async {
     return APIProduct.getListProduct1();
+  }
+
+  @override
+  void initState() {
+    super.initState();
   }
 
   @override
@@ -66,6 +58,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: TextFormField(
+                      onTap: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => const SearchScreen()));
+                      },
                       decoration: InputDecoration(
                         prefixIcon: Icon(
                           Icons.search,

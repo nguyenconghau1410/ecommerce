@@ -1,3 +1,4 @@
+import 'package:elma/screens/login.dart';
 import 'package:flutter/material.dart';
 
 import '../constants/constant.dart';
@@ -99,11 +100,7 @@ class _ProfileScrState extends State<ProfileScr> {
                   style: TextStyle(fontSize: 20),
                 ),
                 onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => HomeScreen(),
-                      ));
+                  Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => Login()), (route) => false);
                 },
               ),
             ],

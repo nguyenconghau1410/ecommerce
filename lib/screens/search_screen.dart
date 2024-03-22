@@ -1,101 +1,81 @@
 import 'package:elma/api/api_products.dart';
-import 'package:elma/constants/constant.dart';
-import 'package:elma/models/category.dart';
 import 'package:elma/screens/productScreen.dart';
 import 'package:flutter/material.dart';
 
+import '../constants/constant.dart';
 import '../models/products.dart';
 
-class AllProductsScreen extends StatefulWidget {
-  Categories categories;
-  AllProductsScreen({super.key, required this.categories});
+class SearchScreen extends StatefulWidget {
+  const SearchScreen({super.key});
 
   @override
-  State<AllProductsScreen> createState() => _AllProductsScreenState();
+  State<SearchScreen> createState() => _SearchScreenState();
 }
 
-class _AllProductsScreenState extends State<AllProductsScreen> {
-  Future<List<Product>> getListProductCategory(categoryId) async {
-    return await APIProduct.getListProductCategory(categoryId);
+class _SearchScreenState extends State<SearchScreen> {
+  final controler = TextEditingController();
+  final focusNode = FocusNode();
+  String keyword = "";
+  Future<List<Product>> search() async {
+    return APIProduct.getListByKeywor(keyword);
   }
-
-  String searchText = '';
-
-
+  @override
+  void initState() {
+    super.initState();
+    focusNode.requestFocus();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          "All Products",
-        ),
-        backgroundColor: Colors.transparent,
-        foregroundColor: Colors.black,
-        leading: BackButton(),
-        elevation: 0,
-        centerTitle: true,
-      ),
-      body: SingleChildScrollView(
+      body: SafeArea(
         child: Padding(
-          padding: EdgeInsets.all(20),
+          padding: EdgeInsets.only(left: 15, right: 15, top: 20),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
+                  InkWell(
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                    child: Icon(Icons.keyboard_backspace, color: Colors.grey,),
+                  ),
+                  Expanded(child: Container()),
                   Container(
                     padding: EdgeInsets.all(5),
                     height: 50,
-                    width: MediaQuery.of(context).size.width / 1.5,
+                    width: MediaQuery.of(context).size.width - 100,
                     decoration: BoxDecoration(
                       color: Colors.black12.withOpacity(0.05),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: TextFormField(
-                      decoration: InputDecoration(
-                        prefixIcon: Icon(
-                          Icons.search,
-                          color: kPrimaryColor,
-                        ),
-                        border: InputBorder.none,
-                        label: Text(
-                          'Find your product',
-                        ),
-                      ),
-                      onChanged: (value) => {
+                      controller: controler,
+                      focusNode: focusNode,
+                      onChanged: (value) {
                         setState(() {
-                          searchText = value;
-                        })
+                          keyword = value;
+                        });
                       },
-                    ),
-                  ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Container(
-                    height: 50,
-                    width: MediaQuery.of(context).size.width / 6,
-                    decoration: BoxDecoration(
-                      color: Colors.black12.withOpacity(0.05),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: const Center(
-                      child: Icon(
-                        Icons.notifications,
-                        color: Color(0xFF5C6AC4),
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintText: 'Find your product',
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 14,
+                          vertical: 0,
+                        ),
                       ),
+
                     ),
-                  )
+                  ),
+                  Expanded(child: Container())
                 ],
               ),
-              SizedBox(
-                height: 20,
-              ),
-              SizedBox(height: 10),
-              FutureBuilder(
-                future: getListProductCategory(widget.categories.id),
+              const SizedBox(height: 10,),
+              keyword != ""
+                  ? FutureBuilder(
+                future: search(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(
@@ -108,12 +88,11 @@ class _AllProductsScreenState extends State<AllProductsScreen> {
                     );
                   } else {
                     final data = snapshot.data;
-                    return GridView.builder(
+                    return Expanded(child: GridView.builder(
                         itemCount: data!.length,
                         shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
                         gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
+                        const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2,
                           childAspectRatio: 0.6,
                           crossAxisSpacing: 2,
@@ -121,28 +100,28 @@ class _AllProductsScreenState extends State<AllProductsScreen> {
                         ),
                         itemBuilder: (context, index) {
                           return ListCategory(data[index]!);
-                        });
+                        }));
                   }
                 },
               )
+                  : Container()
             ],
           ),
-        ),
+        )
       ),
     );
   }
-
   Widget ListCategory(Product product) {
     return InkWell(
-      onTap: (){
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) =>
-                  ProductScreen(product: product,),
-            ));
-      },
-       child:  Center(
+        onTap: (){
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) =>
+                    ProductScreen(product: product,),
+              ));
+        },
+        child:  Center(
           child: Container(
             width: 200,
             margin: const EdgeInsets.only(right: 15, bottom: 10),

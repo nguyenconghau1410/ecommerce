@@ -3,6 +3,7 @@ import 'package:elma/constants/constant.dart';
 import 'package:elma/screens/homeScreen.dart';
 import 'package:elma/screens/login.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class Signup extends StatefulWidget {
   const Signup({super.key});
@@ -12,6 +13,16 @@ class Signup extends StatefulWidget {
 }
 
 class _SignupState extends State<Signup> {
+  final nameController = TextEditingController();
+  final emailController = TextEditingController();
+  final phoneController = TextEditingController();
+  final passwordController = TextEditingController();
+  final confirmController = TextEditingController();
+  final genderController = TextEditingController();
+
+  Future<void> signup(Map<String, dynamic> data) async {
+    return await APIAuth.signup(data);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,13 +37,14 @@ class _SignupState extends State<Signup> {
             ),
             Image.asset("images/freed.png"),
             SizedBox(
-              height: 50,
+              height: 10,
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 25),
               child: Column(
                 children: [
                   TextFormField(
+                    controller: nameController,
                     decoration: InputDecoration(
                         labelText: "Enter name",
                         border: OutlineInputBorder(),
@@ -42,6 +54,7 @@ class _SignupState extends State<Signup> {
                     height: 15,
                   ),
                   TextFormField(
+                    controller: emailController,
                     decoration: InputDecoration(
                       labelText: "Enter email",
                       border: OutlineInputBorder(),
@@ -52,6 +65,7 @@ class _SignupState extends State<Signup> {
                     height: 15,
                   ),
                   TextFormField(
+                    controller: phoneController,
                     decoration: InputDecoration(
                       labelText: "Enter phonenumber",
                       border: OutlineInputBorder(),
@@ -62,6 +76,8 @@ class _SignupState extends State<Signup> {
                     height: 15,
                   ),
                   TextFormField(
+                    controller: passwordController,
+                    obscureText: true,
                     decoration: InputDecoration(
                         labelText: "Enter password",
                         border: OutlineInputBorder(),
@@ -72,6 +88,8 @@ class _SignupState extends State<Signup> {
                     height: 15,
                   ),
                   TextFormField(
+                    controller: confirmController,
+                    obscureText: true,
                     decoration: InputDecoration(
                         labelText: "Confirm password",
                         border: OutlineInputBorder(),
@@ -83,8 +101,21 @@ class _SignupState extends State<Signup> {
                   ),
                   ElevatedButton(
                       onPressed: () {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) => Login()));
+                        Map<String, dynamic> mp = {
+                          "name": nameController.text,
+                          "email": emailController.text,
+                          "phone": phoneController.text,
+                          "password_hash": passwordController.text
+                        };
+                        if(passwordController.text == confirmController.text) {
+                          signup(mp);
+                        }
+                        else {
+                          Fluttertoast.showToast(
+                            msg: "Mật khẩu không trùng nhau",
+                            gravity: ToastGravity.TOP
+                          );
+                        }
                       },
                       child: Text(
                         "Create an account",
